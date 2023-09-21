@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'state.dart';
 import 'my_button.dart';
 
-enum TaskFilter {
-  All,
-  Done,
-  Undone,
-}
-
-// ignore: must_be_immutable
 class MyFilter extends StatelessWidget {
-  final Function(TaskFilter) onFilterSelected;
-
   MyFilter({
     super.key,
-    required this.onFilterSelected,
   });
 
   @override
@@ -30,33 +22,36 @@ class MyFilter extends StatelessWidget {
               // Select ALL -- return all
               text: "All",
               onPressed: () {
-                onFilterSelected(TaskFilter.All);
+                context.read<MyState>().setFilter('all');
+                Navigator.of(context).pop();
               }),
           const SizedBox(height: 8, width: 150),
           MyButton(
               // Select DONE -- return done items
               text: "Done",
               onPressed: () {
-                onFilterSelected(TaskFilter.Done);
+                context.read<MyState>().setFilter('done');
+                Navigator.of(context).pop();
               }),
           const SizedBox(height: 8, width: 150),
           MyButton(
               // Select UNDONE -- return undone items
               text: "Undone",
               onPressed: () {
-                onFilterSelected(TaskFilter.Undone);
+                context.read<MyState>().setFilter('undone');
+                Navigator.of(context).pop();
               }),
           const SizedBox(height: 8, width: 150),
         ],
       ),
       // Cancel button
       actions: <Widget>[
-        ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Cancel', style: TextStyle(color: Colors.white)),
-        ),
+        const SizedBox(height: 12),
+        MyButton(
+            text: 'Cancel',
+            onPressed: () {
+              Navigator.of(context).pop();
+            })
       ],
     );
   }

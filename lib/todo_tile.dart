@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'state.dart';
 
-class ToDoItem {
-  String taskName;
-  bool taskCompleted;
-
-  ToDoItem({
-    required this.taskName,
-    required this.taskCompleted,
-  });
-}
-
-// ignore: must_be_immutable
 class ToDoTile extends StatelessWidget {
   final ToDoItem toDoItem;
-  Function(bool?)? onChanged;
-  Function()? onDelete;
 
   ToDoTile({
     super.key,
     required this.toDoItem,
-    required this.onChanged,
-    required this.onDelete,
   });
 
   @override
@@ -36,17 +23,30 @@ class ToDoTile extends StatelessWidget {
         child: Row(
           children: [
             // Checkbox
-            Checkbox(
-                value: toDoItem.taskCompleted,
-                onChanged: onChanged,
-                side: BorderSide(color: Color.fromARGB(255, 33, 153, 168)),
-                activeColor: Color.fromARGB(255, 33, 153, 168)),
+            GestureDetector(
+              onTap: () {
+                context.read<MyState>().checkBoxChanged(toDoItem);
+              },
+              child: !toDoItem.taskCompleted // if statement för checkbox
+                  ? const Icon(
+                      Icons.check_box_outline_blank,
+                      color: Colors.cyan,
+                    )
+                  : const Icon(
+                      Icons.check_box,
+                      color: Colors.cyan,
+                    ),
+            ),
+
+            // Create some space between checkbox and taskname
+            const SizedBox(width: 15),
 
             // Task name
             Expanded(
                 child: Text(toDoItem.taskName,
                     style: TextStyle(
                       fontSize: 22,
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                       decoration: toDoItem.taskCompleted
                           ? TextDecoration.lineThrough
@@ -56,9 +56,9 @@ class ToDoTile extends StatelessWidget {
             // Delete task (Function in home page)
             IconButton(
                 onPressed: () {
-                  onDelete!();
+                  context.read<MyState>().deleteTask(toDoItem);
                 },
-                icon: Icon(Icons.close))
+                icon: const Icon(Icons.close))
           ],
         ),
       ),
